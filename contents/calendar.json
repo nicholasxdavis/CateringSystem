@@ -23,25 +23,5 @@
     "guestCount": "5",
     "reason": "wr",
     "notes": "asfd"
-  },
-  {
-    "id": 1756509319713,
-    "type": "order",
-    "date": "2025-09-09",
-    "customerName": "da",
-    "customerPhone": "5756363262",
-    "guestCount": "2",
-    "reason": "3",
-    "notes": "2"
-  },
-  {
-    "id": 1756509702314,
-    "type": "order",
-    "date": "2025-09-10",
-    "customerName": "Aiden",
-    "customerPhone": "5756363262",
-    "guestCount": "2",
-    "reason": "Birthday",
-    "notes": "sda"
   }
 ]
