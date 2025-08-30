@@ -13,15 +13,5 @@
     "type": "note",
     "content": "Eric is vegan",
     "createdAt": "2025-08-29T22:19:14.432Z"
-  },
-  {
-    "id": 1756512197626,
-    "type": "order",
-    "date": "2025-08-30",
-    "customerName": "Zap",
-    "customerPhone": "342423322",
-    "guestCount": "123",
-    "reason": "Wedding",
-    "notes": "asd"
   }
 ]
