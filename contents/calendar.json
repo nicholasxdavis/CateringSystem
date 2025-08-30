@@ -35,16 +35,6 @@
     "notes": "template_ptf2tzg"
   },
   {
-    "id": 1756509981011,
-    "type": "order",
-    "date": "2025-09-11",
-    "customerName": "Aiden",
-    "customerPhone": "5756363262",
-    "guestCount": "11",
-    "reason": "Wedding",
-    "notes": "Hola!"
-  },
-  {
     "id": 1756512197626,
     "type": "order",
     "date": "2025-08-30",
