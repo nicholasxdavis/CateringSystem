@@ -14,15 +14,5 @@
     "guestCount": "40",
     "reason": "10",
     "notes": "Example"
-  },
-  {
-    "id": 1756513030038,
-    "type": "order",
-    "date": "2025-08-30",
-    "customerName": "Eric",
-    "customerPhone": "5756363262",
-    "guestCount": "12",
-    "reason": "Wedding",
-    "notes": "Notes go here."
   }
 ]
