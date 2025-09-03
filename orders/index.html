@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Submissions Overview</title>
+    <!-- Styles -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #4ade80;
+            --primary-dark: #22c55e;
+            --dark: #171717;
+            --light: #ffffff;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .main-content {
+            flex-grow: 1;
+        }
+        
+        .toast-animation {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .custom-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .custom-modal-content {
+            background-color: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .custom-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .custom-modal-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #111827;
+        }
+        
+        .custom-modal-close {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        
+        .custom-modal-body {
+            margin-bottom: 1.5rem;
+        }
+        
+        .custom-modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        
+        .custom-modal-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .custom-modal-btn-primary {
+            background-color: #4ade80;
+            color: white;
+            border: none;
+        }
+        
+        .custom-modal-btn-primary:hover {
+            background-color: #22c55e;
+        }
+        
+        .custom-modal-btn-secondary {
+            background-color: #f3f4f6;
+            color: #374151;
+            border: none;
+        }
+        
+        .custom-modal-btn-secondary:hover {
+            background-color: #e5e7eb;
+        }
+        
+        #toast {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background-color: #171717;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: none;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.2s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .order-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .order-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .order-date {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .order-customer {
+            font-weight: 500;
+            color: #1f2937;
+        }
+        
+        .order-phone {
+            color: #4b5563;
+        }
+        
+        .order-reason {
+            color: #374151;
+            margin-top: 0.5rem;
+        }
+        
+        .order-notes {
+            color: #4b5563;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .order-status-accepted {
+            color: #22c55e;
+            font-weight: 500;
+        }
+        
+        .order-status-pending {
+            color: #f59e0b;
+            font-weight: 500;
+        }
+        
+        /* Shimmer effect for loading */
+        .shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 0.75rem;
+        }
+        
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+        
+        .shimmer-card {
+            height: 150px;
+            margin-bottom: 1rem;
+        }
+        
+        /* Action buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .btn-view {
+            color: #111213;
+        }
+        
+        .btn-view:hover {
+            color: #4ade80;
+        }
+        
+        .btn-delete {
+            color: #ef4444;
+        }
+        
+        .btn-delete:hover {
+            color: #dc2626;
+        }
+        
+        .btn-status {
+            color: #22c55e;
+        }
+        
+        .btn-status:hover {
+            color: #16a34a;
+        }
+        
+        .unavailable-label {
+            color: #ef4444;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4ade80',
+                        'primary-dark': '#22c55e',
+                        secondary: '#f6f9fc',
+                        dark: '#171717',
+                        light: '#ffffff',
+                        gray: {
+                            100: '#f8f9fa',
+                            200: '#e9ecef',
+                            300: '#dee2e6',
+                            400: '#ced4da',
+                            500: '#adb5bd',
+                            600: '#058E3F',
+                            700: '#04773B',
+                            800: '#1f2937',
+                            900: '#171717',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        '3xl': '1.5rem',
+                    },
+                    boxShadow: {
+                        'card': '0 2px 4px rgba(0,0,0,.04), 0 8px 16px rgba(0,0,0,.08)',
+                        'button': '0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08)',
+                        'button-hover': '0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-dark text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-3 sm:py-4">
+                <div class="flex items-center space-x-3 sm:space-x-4">
+                    <a href="#">
+                        <img src="../img/logo.png" alt="Logo" class="h-10 sm:h-14 lg:h-20">
+                    </a>
+                </div>
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <a href="../index.html" class="bg-white/10 hover:bg-white/20 px-2 sm:px-3 py-1 sm:py-1.5 rounded-3xl text-xs sm:text-sm font-medium transition-colors">
+                        <i class="fas fa-tachometer-alt mr-1"></i> Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <!-- Page Header -->
+            <div class="mb-10 text-center">
+                <h1 class="text-4xl font-medium text-dark mb-2">Event/Catering</h1>
+                <h1 class="text-4xl font-medium text-dark mb-2">Submissions Overview</h1>
+                <p class="text-gray-600 max-w-lg mx-auto">
+                    View and manage catering order submissions.
+                </p>
+            </div>
+
+            <!-- Orders Section -->
+            <div class="bg-white rounded-3xl border border-gray-100 shadow-card p-8">
+                <div class="text-center mb-6">
+                    <span id="current-date" class="text-sm font-medium text-gray-600"></span>
+                </div>
+                <div class="flex flex-col md:flex-row md:items-center justify-between mb-8">
+                    <h2 class="text-2xl font-medium text-dark mb-4 md:mb-0">
+                        <i class="fas fa-clipboard-list mr-2 text-primary"></i>
+                        All Orders
+                    </h2>
+                </div>
+                
+                <div class="entries-container grid grid-cols-1 gap-6" id="entries-list">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Order Modal -->
+    <div id="view-order-modal" class="custom-modal">
+        <div class="custom-modal-content">
+            <div class="custom-modal-header">
+                <h3 class="custom-modal-title">
+                    <i class="fas fa-calendar-day mr-2 text-primary"></i>
+                    Order Details
+                </h3>
+                <button class="custom-modal-close" id="close-view-order-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="custom-modal-body space-y-4" id="view-order-content">
+            </div>
+            <div class="custom-modal-footer">
+                <button class="custom-modal-btn custom-modal-btn-secondary" id="close-view-order">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="custom-modal">
+        <div class="custom-modal-content">
+            <div class="custom-modal-header">
+                <h3 class="custom-modal-title">
+                    <i class="fas fa-exclamation-triangle mr-2 text-red-500"></i>
+                    Confirm Deletion
+                </h3>
+                <button class="custom-modal-close" id="close-delete-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="custom-modal-body">
+                <p>Are you sure you want to delete this order? This action cannot be undone.</p>
+            </div>
+            <div class="custom-modal-footer">
+                <button class="custom-modal-btn custom-modal-btn-secondary" id="cancel-delete">
+                    Cancel
+                </button>
+                <button class="custom-modal-btn bg-red-500 hover:bg-red-600 text-white" id="confirm-delete">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="hidden">
+        <i class="fas fa-check-circle mr-2 text-green-400"></i>
+        <span id="toast-msg"></span>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        const CONFIG = {
+            REPO: "CateringSystem",
+            SUBMISSION_FILE: "contents/eventsubs.json",
+            CALENDAR_FILE: "contents/calendar.json",
+            BASE_URL: "https://nicholasxdavis.github.io/CateringSystem/contents/"
+        };
+
+        const currentDateElement = document.getElementById('current-date');
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        currentDateElement.textContent = now.toLocaleDateString('en-US', options);
+
+        let entries = [];
+        let unavailableDates = [];
+        let entryToDelete = null;
+
+        async function fetchAndProcessToken() {
+            try {
+                const cacheBuster = `?t=${new Date().getTime()}`;
+                const response = await fetch(`https://nicholasxdavis.github.io/CateringSystem/auth.txt${cacheBuster}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch token');
+                }
+                const tokenWithAsterisks = await response.text();
+                return tokenWithAsterisks.replace(/\*/g, '');
+            } catch (error) {
+                console.error('Error fetching token:', error);
+                showToast('Error loading authentication token', 'error');
+                return null;
+            }
+        }
+
+        async function fetchFromGitHub(filePath) {
+            showToast('Loading data...', 'loading');
+            
+            try {
+                const cacheBuster = `?t=${new Date().getTime()}`;
+                const response = await fetch(`${CONFIG.BASE_URL}${filePath.replace('contents/', '')}${cacheBuster}`);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch data: ${response.statusText}`);
+                }
+                const data = await response.json();
+                showToast('Data loaded successfully!');
+                return data;
+            } catch (error) {
+                console.error(`Error fetching ${filePath}:`, error);
+                showToast(`Error loading data`, 'error');
+                return [];
+            }
+        }
+
+        async function saveToGitHub(filePath, data) {
+            showToast('Saving orders...', 'loading');
+            
+            try {
+                const token = await fetchAndProcessToken();
+                if (!token) {
+                    throw new Error('No authentication token available');
+                }
+
+                let sha = '';
+                try {
+                    const existingFile = await fetch(`https://api.github.com/repos/nicholasxdavis/${CONFIG.REPO}/contents/${filePath}`, {
+                        headers: {
+                            'Authorization': `token ${token}`,
+                            'Accept': 'application/vnd.github.v3+json'
+                        }
+                    });
+                    if (existingFile.ok) {
+                        const fileData = await existingFile.json();
+                        sha = fileData.sha;
+                    }
+                } catch (e) {
+                    console.log('No existing file found, will create new one');
+                }
+
+                const content = JSON.stringify(data, null, 2);
+                const encodedContent = btoa(unescape(encodeURIComponent(content)));
+                
+                const response = await fetch(`https://api.github.com/repos/nicholasxdavis/${CONFIG.REPO}/contents/${filePath}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `Update ${filePath}`,
+                        content: encodedContent,
+                        sha: sha
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('GitHub API error:', errorData);
+                    throw new Error(`Failed to save ${filePath}: ${response.statusText}`);
+                }
+                showToast('Orders saved successfully!');
+                return true;
+            } catch (error) {
+                console.error(`Error saving ${filePath}:`, error);
+                showToast(`Error saving orders`, 'error');
+                return false;
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            
+            toastMsg.textContent = message;
+            
+            if (type === 'error') {
+                toast.innerHTML = `<i class="fas fa-exclamation-circle mr-2 text-red-400"></i><span id="toast-msg">${message}</span>`;
+            } else if (type === 'loading') {
+                toast.innerHTML = `<span class="loading loading-spinner mr-2"></span><span id="toast-msg">${message}</span>`;
+            } else {
+                toast.innerHTML = `<i class="fas fa-check-circle mr-2 text-green-400"></i><span id="toast-msg">${message}</span>`;
+            }
+            
+            toast.classList.remove('hidden');
+            
+            if (type !== 'loading') {
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 3000);
+            }
+        }
+
+        function showShimmerLoader() {
+            const entriesContainer = document.getElementById('entries-list');
+            entriesContainer.innerHTML = '';
+            
+            for (let i = 0; i < 3; i++) {
+                const shimmerCard = document.createElement('div');
+                shimmerCard.classList.add('shimmer', 'shimmer-card');
+                entriesContainer.appendChild(shimmerCard);
+            }
+        }
+
+        async function loadData() {
+            showShimmerLoader();
+            
+            try {
+                // Load eventsubs.json
+                entries = await fetchFromGitHub(CONFIG.SUBMISSION_FILE);
+                if (!Array.isArray(entries)) {
+                    console.error('Entries data is not an array, resetting to empty array');
+                    entries = [];
+                }
+                
+                // Load calendar.json and extract dates
+                const calendarData = await fetchFromGitHub(CONFIG.CALENDAR_FILE);
+                unavailableDates = calendarData
+                    .filter(entry => entry && entry.date)
+                    .map(entry => entry.date.split('T')[0]);
+                
+                renderEntries();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                const entriesContainer = document.getElementById('entries-list');
+                entriesContainer.innerHTML = `
+                    <div class="col-span-full text-center py-10">
+                        <i class="fas fa-exclamation-triangle text-4xl text-red-400 mb-4"></i>
+                        <p class="text-lg text-red-600">Error loading orders</p>
+                        <p class="text-sm mt-2 text-gray-500">Please try refreshing the page</p>
+                    </div>
+                `;
+            }
+        }
+
+        function showOrderDetails(id) {
+            const entry = entries.find(entry => entry.id === id);
+            if (!entry) return;
+            
+            const viewOrderContent = document.getElementById('view-order-content');
+            viewOrderContent.innerHTML = '';
+            
+            let formattedEventDate = 'Invalid date';
+            let formattedTodayDate = 'Invalid date';
+            let rawEventDate = entry.event_date || 'Not specified';
+            const isUnavailable = unavailableDates.includes(rawEventDate.split('T')[0]);
+            const unavailableLabel = isUnavailable ? '<span class="unavailable-label">(Unavailable date)</span>' : '';
+            
+            try {
+                const eventDateOnly = entry.event_date.split('T')[0];
+                const [eventYear, eventMonth, eventDay] = eventDateOnly.split('-');
+                const eventDate = new Date(eventYear, eventMonth - 1, eventDay);
+                formattedEventDate = eventDate.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric'
+                });
+
+                const todayDateOnly = entry.today_date.split('T')[0];
+                const [todayYear, todayMonth, todayDay] = todayDateOnly.split('-');
+                const todayDate = new Date(todayYear, todayMonth - 1, todayDay);
+                formattedTodayDate = todayDate.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric'
+                });
+            } catch (e) {
+                console.error('Error formatting date:', e);
+            }
+            
+            const orderDiv = document.createElement('div');
+            orderDiv.classList.add('border', 'border-gray-200', 'p-4', 'rounded-3xl');
+            
+            orderDiv.innerHTML = `
+                <h4 class="text-lg font-medium mb-4">Order for ${formattedEventDate} ${unavailableLabel}</h4>
+                <p class="text-sm mb-2"><i class="fas fa-calendar-alt mr-2"></i><strong>Submission Date:</strong> ${formattedTodayDate}</p>
+                <p class="order-customer text-sm mb-2"><i class="fas fa-user mr-2"></i><strong>Name:</strong> ${entry.name}</p>
+                <p class="order-phone text-sm mb-2"><i class="fas fa-phone mr-2"></i><strong>Phone:</strong> ${entry.phone || 'No phone'}</p>
+                <p class="text-sm mb-2"><i class="fas fa-envelope mr-2"></i><strong>Email:</strong> ${entry.email || 'No email'}</p>
+                <p class="text-sm mb-2"><i class="fas fa-calendar-alt mr-2"></i><strong>Date:</strong> ${rawEventDate} (${formattedEventDate}) ${unavailableLabel}</p>
+                <p class="text-sm mb-2"><i class="fas fa-clock mr-2"></i><strong>Timeframe:</strong> ${entry.event_timeframe || 'Not specified'}</p>
+                <p class="text-sm mb-2"><i class="fas fa-info-circle mr-2"></i><strong>Occasion:</strong> ${entry.occasion || 'Not specified'}</p>
+                <p class="text-sm mb-2"><i class="fas fa-utensils mr-2"></i><strong>Event Type:</strong> ${entry.event_type || 'Not specified'}</p>
+                <p class="text-sm mb-2"><i class="fas fa-hamburger mr-2"></i><strong>Food Type:</strong> ${entry.food_type || 'Not specified'}</p>
+                <p class="text-sm mb-2"><i class="fas fa-users mr-2"></i><strong>Number of Guests:</strong> ${entry.number_guests || 'Not specified'}</p>
+                ${entry.total_budget ? `<p class="text-sm mb-2"><i class="fas fa-dollar-sign mr-2"></i><strong>Total Budget:</strong> $${entry.total_budget}</p>` : ''}
+                ${entry.budget_per_person ? `<p class="text-sm mb-2"><i class="fas fa-dollar-sign mr-2"></i><strong>Budget per Person:</strong> $${entry.budget_per_person}</p>` : ''}
+                ${entry.hear_about ? `<p class="text-sm mb-2"><i class="fas fa-question-circle mr-2"></i><strong>How They Heard About Us:</strong> ${entry.hear_about}</p>` : ''}
+                ${entry.notes ? `<div class="order-notes text-sm mt-2"><i class="fas fa-sticky-note mr-2"></i><strong>Notes:</strong> ${entry.notes}</div>` : ''}
+                <p class="text-sm mb-2"><i class="fas fa-check-circle mr-2"></i><strong>Status:</strong> <span class="${entry.status === 'accepted' ? 'order-status-accepted' : 'order-status-pending'}">${entry.status || 'pending'}</span></p>
+            `;
+            
+            viewOrderContent.appendChild(orderDiv);
+            openModal(document.getElementById('view-order-modal'));
+        }
+
+        async function toggleOrderStatus(id) {
+            const index = entries.findIndex(entry => entry.id === id);
+            if (index === -1) return;
+            
+            entries[index].status = entries[index].status === 'accepted' ? 'pending' : 'accepted';
+            const success = await saveToGitHub(CONFIG.SUBMISSION_FILE, entries);
+            if (success) {
+                renderEntries();
+            }
+        }
+
+        function confirmDeleteEntry(id) {
+            entryToDelete = id;
+            openModal(document.getElementById('delete-modal'));
+        }
+
+        async function deleteEntry() {
+            if (entryToDelete) {
+                entries = entries.filter(entry => entry.id !== entryToDelete);
+                const success = await saveToGitHub(CONFIG.SUBMISSION_FILE, entries);
+                if (success) {
+                    renderEntries();
+                    closeModal(document.getElementById('delete-modal'));
+                    entryToDelete = null;
+                }
+            }
+        }
+
+        function renderEntries() {
+            const entriesContainer = document.getElementById('entries-list');
+            entriesContainer.innerHTML = '';
+            
+            if (!entries || entries.length === 0) {
+                entriesContainer.innerHTML = `
+                    <div class="col-span-full text-center py-10">
+                        <i class="fas fa-clipboard-list text-4xl opacity-30 mb-4 text-gray-400"></i>
+                        <p class="text-lg text-gray-600">No orders yet</p>
+                        <p class="text-sm mt-2 text-gray-500">Orders will appear here once submitted</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const sortedEntries = [...entries].sort((a, b) => {
+                try {
+                    return new Date(b.event_date || b.createdAt || 0) - new Date(a.event_date || a.createdAt || 0);
+                } catch (e) {
+                    return 0;
+                }
+            });
+            
+            sortedEntries.forEach(entry => {
+                if (!entry || entry.type !== 'order') {
+                    return;
+                }
+                
+                const entryElement = document.createElement('div');
+                entryElement.classList.add('order-card', 'bg-gray-50', 'p-6', 'rounded-3xl', 'border', 'border-gray-200');
+                
+                let formattedDate = 'Invalid date';
+                try {
+                    const dateOnly = entry.event_date.split('T')[0];
+                    const [year, month, day] = dateOnly.split('-');
+                    const correctDate = new Date(year, month - 1, day);
+                    formattedDate = correctDate.toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric'
+                    });
+                } catch (e) {
+                    console.error('Error formatting date:', e);
+                }
+                
+                entryElement.innerHTML = `
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="order-date text-xs text-gray-500">${formattedDate}</span>
+                        <div class="action-buttons">
+                            <button class="btn-view" data-id="${entry.id}" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-status" data-id="${entry.id}" title="${entry.status === 'accepted' ? 'Mark as Pending' : 'Mark as Accepted'}">
+                                <i class="fas ${entry.status === 'accepted' ? 'fa-times-circle' : 'fa-check-circle'}"></i>
+                            </button>
+                            <button class="btn-delete" data-id="${entry.id}" title="Delete Order">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <h3 class="order-customer text-lg font-medium mb-1">${entry.name}</h3>
+                    <p class="order-phone text-sm mb-2"><i class="fas fa-phone mr-2"></i>${entry.phone || 'No phone'}</p>
+                    <p class="text-sm mb-2"><i class="fas fa-users mr-2"></i>${entry.number_guests || 'Not specified'} guests</p>
+                    <p class="order-reason text-sm"><i class="fas fa-info-circle mr-2"></i>${entry.occasion || 'Not specified'}</p>
+                    <p class="text-sm"><i class="fas fa-check-circle mr-2"></i><span class="${entry.status === 'accepted' ? 'order-status-accepted' : 'order-status-pending'}">${entry.status || 'pending'}</span></p>
+                `;
+                
+                const viewBtn = entryElement.querySelector('.btn-view');
+                if (viewBtn) {
+                    viewBtn.addEventListener('click', () => showOrderDetails(entry.id));
+                }
+                
+                const statusBtn = entryElement.querySelector('.btn-status');
+                if (statusBtn) {
+                    statusBtn.addEventListener('click', () => toggleOrderStatus(entry.id));
+                }
+                
+                const deleteBtn = entryElement.querySelector('.btn-delete');
+                if (deleteBtn) {
+                    deleteBtn.addEventListener('click', () => confirmDeleteEntry(entry.id));
+                }
+                
+                entriesContainer.appendChild(entryElement);
+            });
+        }
+
+        function openModal(modal) {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function setupModals() {
+            const viewOrderModal = document.getElementById('view-order-modal');
+            const closeViewOrderModal = document.getElementById('close-view-order-modal');
+            const closeViewOrderBtn = document.getElementById('close-view-order');
+            
+            const deleteModal = document.getElementById('delete-modal');
+            const closeDeleteModal = document.getElementById('close-delete-modal');
+            const cancelDeleteBtn = document.getElementById('cancel-delete');
+            const confirmDeleteBtn = document.getElementById('confirm-delete');
+            
+            closeViewOrderModal.addEventListener('click', () => {
+                closeModal(viewOrderModal);
+            });
+            
+            closeViewOrderBtn.addEventListener('click', () => {
+                closeModal(viewOrderModal);
+            });
+            
+            closeDeleteModal.addEventListener('click', () => {
+                closeModal(deleteModal);
+            });
+            
+            cancelDeleteBtn.addEventListener('click', () => {
+                closeModal(deleteModal);
+            });
+            
+            confirmDeleteBtn.addEventListener('click', () => {
+                deleteEntry();
+            });
+            
+            document.querySelectorAll('.custom-modal').forEach(modal => {
+                modal.addEventListener('click', (event) => {
+                    if (event.target === modal) {
+                        closeModal(modal);
+                    }
+                });
+            });
+        }
+
+        function initApp() {
+            loadData();
+            setupModals();
+        }
+
+        initApp();
+    </script>
+    <script src="../auth.js"></script>
+</body>
+</html>
