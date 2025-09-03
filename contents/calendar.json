@@ -8,15 +8,5 @@
     "guestCount": "40",
     "reason": "10",
     "notes": "Example"
-  },
-  {
-    "id": 1756529964988,
-    "type": "order",
-    "date": "2025-08-31",
-    "customerName": "RJWin",
-    "customerPhone": "5758880097",
-    "guestCount": "80",
-    "reason": "",
-    "notes": ""
   }
 ]
