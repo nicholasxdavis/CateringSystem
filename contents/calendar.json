@@ -1,15 +1,5 @@
 [
   {
-    "id": 1756512828428,
-    "type": "order",
-    "date": "2025-08-01",
-    "customerName": "Eric Evans",
-    "customerPhone": "5758382323",
-    "guestCount": "40",
-    "reason": "10",
-    "notes": "Example"
-  },
-  {
     "id": 1756911681542,
     "type": "order",
     "date": "2025-09-11",
