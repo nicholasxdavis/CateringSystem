@@ -20,25 +20,6 @@
     "status": "pending"
   },
   {
-    "id": 1757007052657,
-    "type": "order",
-    "today_date": "2025-09-04",
-    "name": "nic",
-    "phone": "5752226034",
-    "email": "nic@blacnova.net",
-    "event_date": "2025-09-12",
-    "event_timeframe": "2pm",
-    "occasion": "bday",
-    "event_type": "formal",
-    "food_type": "example",
-    "number_guests": "1",
-    "total_budget": "1",
-    "budget_per_person": "1",
-    "hear_about": "1",
-    "notes": "1",
-    "createdAt": "2025-09-04T17:30:52.657Z"
-  },
-  {
     "id": 1762373414094,
     "type": "order",
     "today_date": "2025-11-05",
@@ -56,24 +37,5 @@
     "hear_about": "I work here",
     "notes": "",
     "createdAt": "2025-11-05T20:10:14.094Z"
-  },
-  {
-    "id": 1762547778403,
-    "type": "order",
-    "today_date": "2025-11-07",
-    "name": "nic x",
-    "phone": "5752701276",
-    "email": "nic@blacnova.net",
-    "event_date": "2025-11-10",
-    "event_timeframe": "2pm",
-    "occasion": "birthdat",
-    "event_type": "formal",
-    "food_type": "mexican",
-    "number_guests": "6",
-    "total_budget": "600",
-    "budget_per_person": "100",
-    "hear_about": "social",
-    "notes": "event",
-    "createdAt": "2025-11-07T20:36:18.403Z"
   }
 ]
