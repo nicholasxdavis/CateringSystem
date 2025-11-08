@@ -18,24 +18,5 @@
     "notes": "event",
     "createdAt": "2025-11-07T20:36:18.403Z",
     "status": "accepted"
-  },
-  {
-    "id": 1762633032873,
-    "type": "order",
-    "today_date": "",
-    "name": "",
-    "phone": "d",
-    "email": "",
-    "event_date": "",
-    "event_timeframe": "",
-    "occasion": "",
-    "event_type": "",
-    "food_type": "",
-    "number_guests": "",
-    "total_budget": "",
-    "budget_per_person": "",
-    "hear_about": "d",
-    "notes": "d",
-    "createdAt": "2025-11-08T20:17:12.873Z"
   }
 ]
